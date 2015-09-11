@@ -1,36 +1,41 @@
 import time
 import unittest
+import storjcore
 from btctxstore import BtcTxStore
-from storjcore import auth
 
 
-class TestConfig(unittest.TestCase):
+class TestAuth(unittest.TestCase):
 
     def setUp(self):
         self.btctxstore = BtcTxStore()
         self.sender_wif = self.btctxstore.create_key()
         self.sender = self.btctxstore.get_address(self.sender_wif)
-        self.recipient = self.btctxstore.get_address(self.btctxstore.create_key())
+        recipient_wif = self.btctxstore.create_key()
+        self.recipient = self.btctxstore.get_address(recipient_wif)
 
     def test_self_validates(self):
-        headers = auth.create_headers(self.btctxstore, self.recipient,
-                                      self.sender_wif)
-        self.assertTrue(auth.validate_headers(self.btctxstore, headers,
-                                              2, self.sender, self.recipient))
+        headers = storjcore.auth.create_headers(self.btctxstore,
+                                                self.recipient,
+                                                self.sender_wif)
+
+        self.assertTrue(storjcore.auth.validate_headers(self.btctxstore,
+                                                        headers,
+                                                        5, self.sender,
+                                                        self.recipient))
 
     def test_timeout_to_old(self):
         def callback():
-            headers = auth.create_headers(self.btctxstore, self.recipient,
-                                          self.sender_wif)
-            time.sleep(2)
-            self.assertTrue(auth.validate_headers(self.btctxstore, headers,
-                                                  2, self.sender,
-                                                  self.recipient))
-            self.assertRaises(callback, auth.AuthError)
+            headers = storjcore.auth.create_headers(self.btctxstore,
+                                                    self.recipient,
+                                                    self.sender_wif)
+            time.sleep(5)
+            storjcore.auth.validate_headers(self.btctxstore, headers,
+                                            5, self.sender, self.recipient)
+        self.assertRaises(storjcore.auth.AuthError, callback)
 
-    @unittest.skip("")
+    @unittest.skip("TODO implement")
     def test_timeout_to_young(self):
-        pass
+        pass  # FIXME how to test this?
 
 
 if __name__ == '__main__':

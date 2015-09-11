@@ -14,7 +14,6 @@ openssl aes-256-cbc -d -in filename.enc -out filename
 """
 
 from hashlib import md5
-
 from Crypto import Random
 from Crypto.Cipher import AES
 
