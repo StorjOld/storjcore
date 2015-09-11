@@ -1,0 +1,2 @@
+# storjcore
+Storj core library.
