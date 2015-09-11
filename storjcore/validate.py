@@ -5,7 +5,8 @@ class ValidationError(Exception):
 
 
 def is_unsigned_int(i):
-    # FIXME implement
+    if (not isinstance(i, int)) or (not i >= 0):
+        raise ValidationError()
     return i
 
 

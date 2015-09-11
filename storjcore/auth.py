@@ -7,22 +7,22 @@ from datetime import timedelta
 from storjcore import validate
 
 
-class AuthenticationError(Exception):
+class AuthError(Exception):
     pass
 
 
-def create_headers(btctxstore, recipient_address, authentication_wif):
+def create_headers(btctxstore, recipient_address, sender_wif):
 
     # validate input
     btctxstore = validate.is_btctxstore(btctxstore)
     recipient_address = validate.is_btcaddress(recipient_address)
-    authentication_wif = validate.is_btcwif(authentication_wif)
+    sender_wif = validate.is_btcwif(sender_wif)
 
     # create header date and signature
     timeval = time.mktime(datetime.now().timetuple())
     date = email.utils.formatdate(timeval=timeval, localtime=True, usegmt=True)
     msg = recipient_address + " " + date
-    signature = btctxstore.sign_unicode(authentication_wif, msg)
+    signature = btctxstore.sign_unicode(sender_wif, msg)
     return {"Date": date, "Authorization": signature}
 
 
@@ -43,11 +43,11 @@ def validate_headers(btctxstore, headers, timeout_sec,
     delta = abs(datetime.now() - clientdate)
     if delta >= timeout:
         msg = "Invalid header date {0} >= {1}!".format(delta, timeout)
-        raise AuthenticationError(msg)
+        raise AuthError(msg)
 
     # verify signature
     msg = recipient_address + " " + date
     if not btctxstore.verify_signature_unicode(sender_address, signature, msg):
         msg = "Invalid signature for auth addr {0}!".format(sender_address)
-        raise AuthenticationError(msg)
+        raise AuthError(msg)
     return True
