@@ -18,10 +18,20 @@ class TestAuth(unittest.TestCase):
                                                 self.recipient,
                                                 self.sender_wif)
 
-        self.assertTrue(storjcore.auth.validate_headers(self.btctxstore,
-                                                        headers,
-                                                        5, self.sender,
-                                                        self.recipient))
+        self.assertTrue(storjcore.auth.verify_headers(self.btctxstore,
+                                                      headers,
+                                                      5, self.sender,
+                                                      self.recipient))
+
+    def test_invalid_signature(self):
+        def callback():
+            headers = storjcore.auth.create_headers(self.btctxstore,
+                                                    self.recipient,
+                                                    self.sender_wif)
+            headers["Authorization"] = "invalid_signarure"
+            storjcore.auth.verify_headers(self.btctxstore, headers,
+                                          5, self.sender, self.recipient)
+        self.assertRaises(storjcore.auth.AuthError, callback)
 
     def test_timeout_to_old(self):
         def callback():
@@ -29,8 +39,8 @@ class TestAuth(unittest.TestCase):
                                                     self.recipient,
                                                     self.sender_wif)
             time.sleep(5)
-            storjcore.auth.validate_headers(self.btctxstore, headers,
-                                            5, self.sender, self.recipient)
+            storjcore.auth.verify_headers(self.btctxstore, headers,
+                                          5, self.sender, self.recipient)
         self.assertRaises(storjcore.auth.AuthError, callback)
 
     @unittest.skip("TODO implement")

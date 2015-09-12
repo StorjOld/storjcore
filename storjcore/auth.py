@@ -12,6 +12,19 @@ class AuthError(Exception):
 
 
 def create_headers(btctxstore, recipient_address, sender_wif):
+    """ Create authentication headers that can be used in a http query.
+
+    Args:
+        btctxstore: BtcTxStore instance used for signing.
+        recipient_address: The bitcoin address of the recipient.
+        sender_wif: Sender wallet used to sign the authentication message.
+
+    Returns:
+        {"Date": date, "Authorization": signature}
+
+    Raises:
+        storjcore.validate.ValidationError: if input was invalid
+    """
 
     # validate input
     btctxstore = validate.is_btctxstore(btctxstore)
@@ -26,8 +39,25 @@ def create_headers(btctxstore, recipient_address, sender_wif):
     return {"Date": date, "Authorization": signature}
 
 
-def validate_headers(btctxstore, headers, timeout_sec,
-                     sender_address, recipient_address):
+def verify_headers(btctxstore, headers, timeout_sec,
+                   sender_address, recipient_address):
+    """ Verify authentication headers from http query.
+
+    Args:
+        btctxstore: BtcTxStore instance used to verify signature.
+        headers: Authentication headers to be verified.
+        timeout_sec: Timeout in seconds, where the date is valid.
+        sender_address: Sender bitcoin address used for signing.
+        recipient_address: The bitcoin address of the recipient.
+
+    Returns:
+        True if authentication headers are valid
+
+    Raises:
+        storjcore.auth.AuthError: if date or signature was invalid
+        storjcore.validate.ValidationError: if input was invalid
+    """
+
     # validate input
     btctxstore = validate.is_btctxstore(btctxstore)
     headers = validate.is_dict(headers)
