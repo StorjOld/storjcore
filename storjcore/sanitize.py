@@ -2,7 +2,7 @@ import base64
 from btctxstore import BtcTxStore
 
 
-class ValidationError(Exception):
+class ValidationError(ValueError):
     pass
 
 
