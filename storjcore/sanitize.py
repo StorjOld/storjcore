@@ -32,7 +32,7 @@ def is_signature(s):
     return s
 
 
-def is_rfc7231_date(d):
+def is_header_date(d):
     d = is_any_string(d)
     # FIXME implement
     return d
@@ -52,6 +52,7 @@ def is_btcwif(btctxstore, wif):
 
 
 def is_btcaddress(btctxstore, address):
+    """ TODO doc string """
     btctxstore = is_btctxstore(btctxstore)
     if not btctxstore.validate_address(address):
         raise ValidationError()

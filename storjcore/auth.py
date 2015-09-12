@@ -4,7 +4,7 @@ from email.utils import parsedate_tz
 from email.utils import mktime_tz
 from datetime import datetime
 from datetime import timedelta
-from storjcore import validate
+from storjcore import sanitize
 
 
 class AuthError(Exception):
@@ -23,13 +23,13 @@ def create_headers(btctxstore, recipient_address, sender_wif):
         {"Date": date, "Authorization": signature}
 
     Raises:
-        storjcore.validate.ValidationError: if input is invalid
+        storjcore.sanitize.ValidationError: if input is invalid
     """
 
-    # validate input
-    btctxstore = validate.is_btctxstore(btctxstore)
-    recipient_address = validate.is_btcaddress(btctxstore, recipient_address)
-    sender_wif = validate.is_btcwif(btctxstore, sender_wif)
+    # sanitize input
+    btctxstore = sanitize.is_btctxstore(btctxstore)
+    recipient_address = sanitize.is_btcaddress(btctxstore, recipient_address)
+    sender_wif = sanitize.is_btcwif(btctxstore, sender_wif)
 
     # create header date and signature
     timeval = time.mktime(datetime.now().timetuple())
@@ -55,17 +55,17 @@ def verify_headers(btctxstore, headers, timeout_sec,
 
     Raises:
         storjcore.auth.AuthError: if date or signature is invalid
-        storjcore.validate.ValidationError: if input was invalid
+        storjcore.sanitize.ValidationError: if input was invalid
     """
 
-    # validate input
-    btctxstore = validate.is_btctxstore(btctxstore)
-    headers = validate.is_dict(headers)
-    signature = validate.is_signature(headers.get("Authorization"))
-    date = validate.is_rfc7231_date(headers.get("Date"))
-    timeout_sec = validate.is_unsigned_int(timeout_sec)
-    sender_address = validate.is_btcaddress(btctxstore, sender_address)
-    recipient_address = validate.is_btcaddress(btctxstore, recipient_address)
+    # sanitize input
+    btctxstore = sanitize.is_btctxstore(btctxstore)
+    headers = sanitize.is_dict(headers)
+    signature = sanitize.is_signature(headers.get("Authorization"))
+    date = sanitize.is_header_date(headers.get("Date"))
+    timeout_sec = sanitize.is_unsigned_int(timeout_sec)
+    sender_address = sanitize.is_btcaddress(btctxstore, sender_address)
+    recipient_address = sanitize.is_btcaddress(btctxstore, recipient_address)
 
     # verify date
     clientdate = datetime.fromtimestamp(mktime_tz(parsedate_tz(date)))

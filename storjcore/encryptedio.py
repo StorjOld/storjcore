@@ -29,7 +29,7 @@ def symmetric_encrypt(in_file, out_file, password, key_length=32):
         key_length: Key lenght.
 
     Raises:
-        storjcore.validate.ValidationError: if input is invalid
+        storjcore.sanitize.ValidationError: if input is invalid
 
     Source:
         http://stackoverflow.com/a/16761459
@@ -41,7 +41,7 @@ def symmetric_encrypt(in_file, out_file, password, key_length=32):
         >     encryptedio.symmetric_encrypt(fi, fo, b"secure_password")
     """
 
-    # FIXME validate input
+    # FIXME sanitize input
     assert(isinstance(password, bytes))
     assert(isinstance(key_length, int))
 
@@ -74,7 +74,7 @@ def symmetric_decrypt(in_file, out_file, password, key_length=32):
         key_length: Key lenght.
 
     Raises:
-        storjcore.validate.ValidationError: if input is invalid
+        storjcore.sanitize.ValidationError: if input is invalid
 
     Source:
         http://stackoverflow.com/a/16761459
@@ -86,7 +86,7 @@ def symmetric_decrypt(in_file, out_file, password, key_length=32):
         >     encryptedio.symmetric_decrypt(fi, fo, b"secure_password")
     """
 
-    # FIXME validate input
+    # FIXME sanitize input
     assert(isinstance(password, bytes))
     assert(isinstance(key_length, int))
 
