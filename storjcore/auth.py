@@ -28,8 +28,8 @@ def create_headers(btctxstore, recipient_address, sender_wif):
 
     # validate input
     btctxstore = validate.is_btctxstore(btctxstore)
-    recipient_address = validate.is_btcaddress(recipient_address)
-    sender_wif = validate.is_btcwif(sender_wif)
+    recipient_address = validate.is_btcaddress(btctxstore, recipient_address)
+    sender_wif = validate.is_btcwif(btctxstore, sender_wif)
 
     # create header date and signature
     timeval = time.mktime(datetime.now().timetuple())
@@ -64,8 +64,8 @@ def verify_headers(btctxstore, headers, timeout_sec,
     signature = validate.is_signature(headers.get("Authorization"))
     date = validate.is_rfc7231_date(headers.get("Date"))
     timeout_sec = validate.is_unsigned_int(timeout_sec)
-    sender_address = validate.is_btcaddress(sender_address)
-    recipient_address = validate.is_btcaddress(recipient_address)
+    sender_address = validate.is_btcaddress(btctxstore, sender_address)
+    recipient_address = validate.is_btcaddress(btctxstore, recipient_address)
 
     # verify date
     clientdate = datetime.fromtimestamp(mktime_tz(parsedate_tz(date)))

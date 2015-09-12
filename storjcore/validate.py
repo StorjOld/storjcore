@@ -1,7 +1,15 @@
+import base64
+from btctxstore import BtcTxStore
 
 
 class ValidationError(Exception):
     pass
+
+
+def is_any_string(s):
+    if type(s) not in [type("string"), type(b"bytes"), type(u"unicode")]:
+        raise ValidationError()
+    return s
 
 
 def is_unsigned_int(i):
@@ -17,25 +25,34 @@ def is_dict(d):
 
 
 def is_signature(s):
-    # FIXME implement
+    s = is_any_string(s)
+    # FIXME convert to correct string type
+    if len(base64.b64decode(s)) != 65:
+        raise ValidationError()
     return s
 
 
 def is_rfc7231_date(d):
+    d = is_any_string(d)
     # FIXME implement
     return d
 
 
-def is_btcaddress(address):
-    # FIXME implement
-    return address
+def is_btctxstore(btctxstore):
+    if not isinstance(btctxstore, BtcTxStore):
+        raise ValidationError()
+    return btctxstore
 
 
-def is_btcwif(wif):
-    # FIXME implement
+def is_btcwif(btctxstore, wif):
+    btctxstore = is_btctxstore(btctxstore)
+    if not btctxstore.validate_key(wif):
+        raise ValidationError()
     return wif
 
 
-def is_btctxstore(btctxstore):
-    # FIXME implement
-    return btctxstore
+def is_btcaddress(btctxstore, address):
+    btctxstore = is_btctxstore(btctxstore)
+    if not btctxstore.validate_address(address):
+        raise ValidationError()
+    return address
