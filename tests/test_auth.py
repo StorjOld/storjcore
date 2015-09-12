@@ -1,4 +1,5 @@
 import time
+import base64
 import unittest
 import storjcore
 from btctxstore import BtcTxStore
@@ -28,7 +29,7 @@ class TestAuth(unittest.TestCase):
             headers = storjcore.auth.create_headers(self.btctxstore,
                                                     self.recipient,
                                                     self.sender_wif)
-            headers["Authorization"] = "invalid_signarure"
+            headers["Authorization"] = base64.b64encode(65 * b"x")
             storjcore.auth.verify_headers(self.btctxstore, headers,
                                           5, self.sender, self.recipient)
         self.assertRaises(storjcore.auth.AuthError, callback)
