@@ -23,7 +23,7 @@ def create_headers(btctxstore, recipient_address, sender_wif):
         {"Date": date, "Authorization": signature}
 
     Raises:
-        storjcore.validate.ValidationError: if input was invalid
+        storjcore.validate.ValidationError: if input is invalid
     """
 
     # validate input
@@ -54,7 +54,7 @@ def verify_headers(btctxstore, headers, timeout_sec,
         True if authentication headers are valid
 
     Raises:
-        storjcore.auth.AuthError: if date or signature was invalid
+        storjcore.auth.AuthError: if date or signature is invalid
         storjcore.validate.ValidationError: if input was invalid
     """
 

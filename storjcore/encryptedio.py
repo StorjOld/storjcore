@@ -1,18 +1,3 @@
-"""
-OpenSSL compatible aes file io (source: http://stackoverflow.com/a/16761459)
-
-# usage:
-import encryptedio
-with open(in_filename, 'rb') as in_file, open(out_filename, 'wb') as out_file:
-    encryptedio.encrypt(in_file, out_file, password)
-with open(in_filename, 'rb') as in_file, open(out_filename, 'wb') as out_file:
-    encryptedio.decrypt(in_file, out_file, password)
-
-# equivalent to:
-openssl aes-256-cbc -salt -in filename -out filename.enc
-openssl aes-256-cbc -d -in filename.enc -out filename
-"""
-
 from hashlib import md5
 from Crypto import Random
 from Crypto.Cipher import AES
@@ -32,9 +17,35 @@ def _derive_key_and_iv(password, salt, key_length, iv_length):
     return d[:key_length], d[key_length:key_length+iv_length]
 
 
-def encrypt(in_file, out_file, password, key_length=32):
+def symmetric_encrypt(in_file, out_file, password, key_length=32):
+    """ OpenSSL compatible aes encryption.
+
+    Equivalent to `openssl aes-256-cbc -salt -in in_file -out out_file.enc`
+
+    Args:
+        in_file: Input file like object.
+        out_file: Output file like object.
+        password: Secure encryption password.
+        key_length: Key lenght.
+
+    Raises:
+        storjcore.validate.ValidationError: if input is invalid
+
+    Source:
+        http://stackoverflow.com/a/16761459
+        Added documentation, tests, input validation and ported to Python 3.
+
+    Example:
+        > from storjcore import encryptedio
+        > with open("in_file", 'rb') as fi, open("out_file.enc", 'wb') as fo:
+        >     encryptedio.symmetric_encrypt(fi, fo, b"secure_password")
+    """
+
+    # FIXME validate input
     assert(isinstance(password, bytes))
     assert(isinstance(key_length, int))
+
+    # encrypet
     bs = AES.block_size
     salt = Random.new().read(bs - len(b'Salted__'))
     key, iv = _derive_key_and_iv(password, salt, key_length, bs)
@@ -51,9 +62,35 @@ def encrypt(in_file, out_file, password, key_length=32):
         out_file.write(encrypted_chunk)
 
 
-def decrypt(in_file, out_file, password, key_length=32):
+def symmetric_decrypt(in_file, out_file, password, key_length=32):
+    """ OpenSSL compatible aes decryption.
+
+    Equivalent to `openssl aes-256-cbc -d -in in_file.enc -out out_file`
+
+    Args:
+        in_file: Input file like object.
+        out_file: Output file like object.
+        password: Secure encryption password.
+        key_length: Key lenght.
+
+    Raises:
+        storjcore.validate.ValidationError: if input is invalid
+
+    Source:
+        http://stackoverflow.com/a/16761459
+        Added documentation, tests, input validation and ported to Python 3.
+
+    Example:
+        > from storjcore import encryptedio
+        > with open("in_file.enc", 'rb') as fi, open("out_file", 'wb') as fo:
+        >     encryptedio.symmetric_decrypt(fi, fo, b"secure_password")
+    """
+
+    # FIXME validate input
     assert(isinstance(password, bytes))
     assert(isinstance(key_length, int))
+
+    # decrypt
     bs = AES.block_size
     salt = in_file.read(bs)[len(b'Salted__'):]
     key, iv = _derive_key_and_iv(password, salt, key_length, bs)
