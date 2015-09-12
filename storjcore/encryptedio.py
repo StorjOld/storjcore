@@ -22,7 +22,7 @@ def symmetric_encrypt(in_file, out_file, password, key_length=32):
 
     Equivalent to `openssl aes-256-cbc -salt -in in_file -out out_file.enc`
 
-    Args:
+    Arguments:
         in_file: Input file like object.
         out_file: Output file like object.
         password: Secure encryption password.
@@ -67,7 +67,7 @@ def symmetric_decrypt(in_file, out_file, password, key_length=32):
 
     Equivalent to `openssl aes-256-cbc -d -in in_file.enc -out out_file`
 
-    Args:
+    Arguments:
         in_file: Input file like object.
         out_file: Output file like object.
         password: Secure encryption password.

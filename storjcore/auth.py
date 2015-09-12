@@ -14,7 +14,7 @@ class AuthError(Exception):
 def create_headers(btctxstore, recipient_address, sender_wif):
     """ Create authentication headers that can be used in a http query.
 
-    Args:
+    Arguments:
         btctxstore: BtcTxStore instance used for signing.
         recipient_address: The bitcoin address of the recipient.
         sender_wif: Sender wallet used to sign the authentication message.
@@ -31,9 +31,11 @@ def create_headers(btctxstore, recipient_address, sender_wif):
     recipient_address = sanitize.is_btcaddress(btctxstore, recipient_address)
     sender_wif = sanitize.is_btcwif(btctxstore, sender_wif)
 
-    # create header date and signature
+    # create header date
     timeval = time.mktime(datetime.now().timetuple())
     date = email.utils.formatdate(timeval=timeval, localtime=True, usegmt=True)
+
+    # create header signature
     msg = recipient_address + " " + date
     signature = btctxstore.sign_unicode(sender_wif, msg)
     return {"Date": date, "Authorization": signature}
@@ -43,7 +45,7 @@ def verify_headers(btctxstore, headers, timeout_sec,
                    sender_address, recipient_address):
     """ Verify authentication headers from http query.
 
-    Args:
+    Arguments:
         btctxstore: BtcTxStore instance used to verify signature.
         headers: Authentication headers to be verified.
         timeout_sec: Timeout in seconds, where the date is valid.
