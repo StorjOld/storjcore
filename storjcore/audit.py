@@ -1,33 +1,52 @@
+import hashlib
 import partialhash
 
 
-def generate_response(data, challange):
+def generate_response(btctxstore, data, challenge):
     """ Generates the response for a requested audit.
 
     Arguments:
-        data: File path or file like object. 
-        challange: challange bytes
+        btctxstore: ie
+        data: File path or file like object.
+        challenge: challenge bytes
 
     Returns:
-        sha256sum(challange + data)
-        
+        { "response": sha256sum, "reward_wif": sha256sum }
     """
     # TODO validate input
-    return partialhash.compute(data, seed=challange)
+
+    # get reward secret sha256sum(challenge + data)
+    reward_secret = partialhash.compute(data, seed=challenge)
+
+    # generate reward wif from reward secret
+    reward_wif = btctxstore.create_key(master_secret=reward_secret)
+
+    # get response (second hash to prevent infering of the reward secret)
+    response = hashlib.sha256(reward_secret).digest()
+
+    return { "response": response, "reward_wif": reward_wif }
 
 
-def verify_response(data, challange, response):
+
+def verify_response(data, challenge, response):
     """ Generates the response for a requested audit.
 
     Arguments:
-        data: File path or file like object. 
-        challange: challange bytes
+        data: File path or file like object.
+        challenge: challenge bytes
         response: The audit response to verify.
 
     Returns:
         True if response is correct.
-        
+
     """
     # TODO validate input
-    return response == generate(data, challange)
+
+    # get reward secret sha256sum(challenge + data)
+    reward_secret = partialhash.compute(data, seed=challenge)
+
+    # get response sha256sum(reward secret)
+    generated_response = hashlib.sha256(reward_secret).digest()
+
+    return response == generate_response
 
