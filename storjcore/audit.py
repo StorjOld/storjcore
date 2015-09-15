@@ -2,16 +2,19 @@ import hashlib
 import partialhash
 
 
+# FIXME remove reward wif (will use micropayment channels instead)
+
+
 def generate_response(btctxstore, data, challenge):
     """ Generates the response for a requested audit.
 
     Arguments:
-        btctxstore: ie
+        btctxstore: BtcTxStore instance used generate the reward wif.
         data: File path or file like object.
         challenge: challenge bytes
 
     Returns:
-        { "response": sha256sum, "reward_wif": sha256sum }
+        { "response": sha256sum, "reward_wif": bitcoin_wif }
     """
     # TODO validate input
 
