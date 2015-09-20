@@ -8,8 +8,8 @@ from setuptools import setup, find_packages
 
 
 exec(open('storjcore/version.py').read())  # load __version__
-DOWNLOAD_URL = "%(baseurl)s/%(name)s/%(name)s-%(version)s.tar.gz" % {
-    'baseurl': "https://pypi.python.org/packages/source/a",
+DOWNLOAD_URL = "%(baseurl)s/%(name)s/%(name)s-%(version)s-py2.py3-none-any.whl" % {
+    'baseurl': "https://pypi.python.org/packages/3.4/d",
     'name': 'storjcore',
     'version': __version__  # NOQA
 }
