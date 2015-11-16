@@ -2,17 +2,10 @@
 # coding: utf-8
 
 
-import os
-import sys
 from setuptools import setup, find_packages
 
 
 exec(open('storjcore/version.py').read())  # load __version__
-DOWNLOAD_URL = "%(baseurl)s/%(name)s/%(name)s-%(version)s-py2.py3-none-any.whl" % {
-    'baseurl': "https://pypi.python.org/packages/3.4/d",
-    'name': 'storjcore',
-    'version': __version__  # NOQA
-}
 
 
 setup(
@@ -29,7 +22,6 @@ setup(
     dependency_links=[],
     install_requires=open("requirements.txt").readlines(),
     tests_require=open("test_requirements.txt").readlines(),
-    download_url=DOWNLOAD_URL,
     packages=find_packages(),
     classifiers=[
         # "Development Status :: 1 - Planning",
